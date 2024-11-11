@@ -1,25 +1,34 @@
-import logo from './logo.svg';
+import React from 'react';
+import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
+import ProductList from './components/ProductList';
+import AddProduct from './components/AddProduct';
+import Cart from './components/Cart';
+import PurchaseSuccess from './components/PurchaseSuccess';
 import './App.css';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [cart, setCart] = React.useState([]);
+
+    return (
+        <Router>
+            <div className="App">
+                <nav>
+                    <ul>
+                        <li><Link to="/">Products</Link></li>
+                        <li><Link to="/add-product">Add Product</Link></li>
+                        <li><Link to="/cart">Cart ({cart.length})</Link></li>
+                    </ul>
+                </nav>
+                
+                <Switch>
+                    <Route exact path="/" render={(props) => <ProductList {...props} cart={cart} setCart={setCart} />} />
+                    <Route path="/add-product" component={AddProduct} />
+                    <Route path="/cart" render={(props) => <Cart {...props} cart={cart} setCart={setCart} />} />
+                    <Route path="/purchase-success" component={PurchaseSuccess} />
+                </Switch>
+            </div>
+        </Router>
+    );
 }
 
-export default App;
+export default App; 
