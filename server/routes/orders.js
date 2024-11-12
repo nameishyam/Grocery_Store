@@ -2,17 +2,14 @@ const express = require("express");
 const router = express.Router();
 const db = require("../config/db");
 
-// Create a new order
 router.post("/", async (req, res) => {
   const { userId, items, totalAmount } = req.body;
 
   try {
     console.log("Received order:", { userId, items, totalAmount });
 
-    // Start transaction
     await db.query("START TRANSACTION");
 
-    // Create order
     const [orderResult] = await db.query(
       "INSERT INTO orders (user_id, total_amount) VALUES (?, ?)",
       [userId, totalAmount]
@@ -20,15 +17,12 @@ router.post("/", async (req, res) => {
 
     const orderId = orderResult.insertId;
 
-    // Add order items
     for (const item of items) {
-      // Insert order item
       await db.query(
         "INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)",
         [orderId, item.productId, item.quantity, item.price]
       );
 
-      // Update product stock
       const [stockResult] = await db.query(
         "SELECT stock FROM products WHERE id = ?",
         [item.productId]
@@ -49,7 +43,6 @@ router.post("/", async (req, res) => {
       ]);
     }
 
-    // Commit transaction
     await db.query("COMMIT");
     res.status(201).json({ orderId });
   } catch (error) {
