@@ -5,7 +5,6 @@ const orderRoutes = require('./routes/orders');
 
 const app = express();
 
-// CORS configuration
 app.use(cors({
     origin: 'http://localhost:3000',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
